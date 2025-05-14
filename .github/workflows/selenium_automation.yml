@@ -33,4 +33,4 @@ jobs:
       env:
         OM_USER: ${{ secrets.OM_USER }}
         OM_PASS: ${{ secrets.OM_PASS }}
-      run: python your_script_name.py  # Replace with your script filename
+      run: python optinmonster-automation.py  # Replace with your script filename
