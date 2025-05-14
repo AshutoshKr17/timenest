@@ -9,24 +9,28 @@ from webdriver_manager.chrome import ChromeDriverManager
 import time
 
 # Configuration
-OM_USER = "fakeemail@gmail.com"  # Replace with your email
-OM_PASS = 'your_password'          # Replace with your password
+OM_USER = os.getenv('OM_USER')  
+OM_PASS = os.getenv('OM_PASS')
 
 
 def delete_all_leads():
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument("--start-maximized")
-    
+    chrome_options = Options()
+    chrome_options.add_argument("--headless=new")  # Run without a GUI
+    chrome_options.add_argument("--no-sandbox")    # Required for GitHub
+    chrome_options.add_argument("--disable-dev-shm-usage")  # Prevents crashes
+    chrome_options.add_argument("--window-size=1920,1080")  # Sets window size
 
     driver = webdriver.Chrome(
         service=ChromeService(ChromeDriverManager().install()),
         options=chrome_options
     )
+    
     wait = WebDriverWait(driver, 5)
     try:
         # Login
         driver.get("https://app.optinmonster.com/login")
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "login"))).send_keys(OM_USER)
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "login"))).send_keys(OM_USER)
+        
         driver.find_element(By.ID, "password").send_keys(OM_PASS)
         login_btn = WebDriverWait(driver, 20).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, 'input.button-blue[type="submit"][value="Log In"]'))
@@ -83,7 +87,11 @@ def delete_all_leads():
             # except:
             #     print("No more pages")
             #     break
-
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        driver.save_screenshot("error.png")  # Saves screenshot if something fails
+        raise  # Stops the script and shows error in GitHub logs
+    
     finally:
         driver.quit()
 
