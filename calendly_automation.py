@@ -2,6 +2,10 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 from datetime import datetime, timedelta
 import time
 import subprocess
@@ -21,8 +25,8 @@ CALENDLY_LOGIN_URL = "https://calendly.com/login"
 DATA_DELETION_URL = "https://calendly.com/app/admin/security/data_deletion"
 
 # Configuration
-EMAIL = "akushwaha@digitalocean.com"
-PASSWORD = "Ashutosh@170902"
+EMAIL = os.getenv('EMAIL_TEST')
+PASSWORD = os.getenv('PASS_TEST') 
 
 def calculate_dates():
     today = datetime.now()
@@ -76,14 +80,12 @@ def automate_calendly_cleanup():
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
     
-    
     driver = webdriver.Chrome(
         service=ChromeService(ChromeDriverManager().install()),
         options=chrome_options
     )
     
     wait = WebDriverWait(driver, 5)
-    
     
     try:
         # Login
