@@ -1,4 +1,4 @@
-name: OptinMonster Lead Cleanup
+name: Calendly PII cleanup 
 
 on:
   schedule:
@@ -29,7 +29,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y chromium-browser chromium-chromedriver
         
-    - name: Run OptinMonster cleanup
+    - name: Run calendly cleanup
       env:
         OM_USER: ${{ secrets.EMAIL_TEST }}
         OM_PASS: ${{ secrets.PASS_TEST }}
