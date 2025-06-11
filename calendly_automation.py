@@ -76,8 +76,14 @@ def automate_calendly_cleanup():
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
     
-    driver = webdriver.Chrome(options=chrome_options)
-    wait = WebDriverWait(driver, 20)
+    
+    driver = webdriver.Chrome(
+        service=ChromeService(ChromeDriverManager().install()),
+        options=chrome_options
+    )
+    
+    wait = WebDriverWait(driver, 5)
+    
     
     try:
         # Login
