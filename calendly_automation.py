@@ -6,20 +6,23 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
-import os
-import time
 import logging
-
-# Configuration
-EMAIL = "akushwaha@digitalocean.com"
-PASSWORD = "Ashutosh@170902"
-
 
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[logging.StreamHandler()]
 )
+
+
+import os
+import time
+
+
+# Configuration
+EMAIL = "akushwaha@digitalocean.com"
+PASSWORD = "Ashutosh@170902"
+
 
 # Configuration
 CALENDLY_LOGIN_URL = "https://calendly.com/login"
