@@ -25,8 +25,8 @@ CALENDLY_LOGIN_URL = "https://calendly.com/login"
 DATA_DELETION_URL = "https://calendly.com/app/admin/security/data_deletion"
 
 # Configuration
-EMAIL = os.getenv('EMAIL_TEST')
-PASSWORD = os.getenv('PASS_TEST') 
+EMAIL = os.getenv('EMAIL_TEST')  or "akushwaha@digitalocean.com"
+PASSWORD = os.getenv('PASS_TEST')  or "Ashutosh@170902"
 
 def calculate_dates():
     today = datetime.now()
