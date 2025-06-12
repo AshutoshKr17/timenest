@@ -22,11 +22,6 @@ import time
 
 
 # Configuration
-EMAIL = str(os.getenv('EMAIL_TEST', ''))
-PASSWORD = str(os.getenv('PASS_TEST', ''))
-
-
-# Configuration
 CALENDLY_LOGIN_URL = "https://calendly.com/login"
 DATA_DELETION_URL = "https://calendly.com/app/admin/security/data_deletion"
 
@@ -76,11 +71,22 @@ def select_date_in_calendar(driver, wait, date_to_select):
 
 
 def automate_calendly_cleanup():
+        
+    # Configuration
+    EMAIL_temp = os.getenv('EMAIL_TEST')
+    PASSWORD_temp = os.getenv('PASS_TEST')
+    EMAIL = str(EMAIL_temp)
+    PASSWORD = str(PASSWORD_temp)
+    
     chrome_options = Options()
-    chrome_options.add_argument("--headless=new")  # Run without a GUI
-    chrome_options.add_argument("--no-sandbox")    # Required for GitHub
-    chrome_options.add_argument("--disable-dev-shm-usage")  # Prevents crashes
-    chrome_options.add_argument("--window-size=1920,1080")  # Sets window size
+    chrome_options.add_argument("--headless=new")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--window-size=1920,1080")
+    # Add anti-detection parameters
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    chrome_options.add_experimental_option("useAutomationExtension", False)
 
     driver = webdriver.Chrome(
         service=ChromeService(ChromeDriverManager().install()),
@@ -90,30 +96,13 @@ def automate_calendly_cleanup():
     wait = WebDriverWait(driver, 5)
     try:
         driver.get(CALENDLY_LOGIN_URL)
-        
-        # Modified login sequence with chained actions
-        wait.until(EC.element_to_be_clickable(
-            (By.CSS_SELECTOR, "[data-testid='email-input'] input")
-        )).send_keys(EMAIL)
-        
-        wait.until(EC.element_to_be_clickable(
-            (By.CSS_SELECTOR, "button.button-primary")
-        )).click()
+        email_input = WebDriverWait(driver, 30).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='email-input'] input")))
+        email_input.send_keys(EMAIL)
+        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.button-primary"))).click()
 
-        # Wait for login page to load completely
-        wait.until(EC.url_contains("/login?password=true"))
-        
-        # Use more specific password field selector with multiple attributes
-        password_field = wait.until(EC.element_to_be_clickable(
-            (By.CSS_SELECTOR, "input[type='password'][name='password'][placeholder='password']")
-        ))
-        # Clear field before sending keys
-        password_field.clear()
+        password_field = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[type='password'][placeholder='password']")))
         password_field.send_keys(PASSWORD)
-        
-        wait.until(EC.element_to_be_clickable(
-            (By.CSS_SELECTOR, "button[type='submit']")
-        )).click()
+        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']"))).click()
 
         wait.until(EC.url_contains("event_types"))
 
@@ -196,4 +185,3 @@ def automate_calendly_cleanup():
 
 if __name__ == "__main__":
     automate_calendly_cleanup()
-
