@@ -22,6 +22,11 @@ import time
 
 
 # Configuration
+EMAIL = str(os.getenv('EMAIL_TEST', ''))
+PASSWORD = str(os.getenv('PASS_TEST', ''))
+
+
+# Configuration
 CALENDLY_LOGIN_URL = "https://calendly.com/login"
 DATA_DELETION_URL = "https://calendly.com/app/admin/security/data_deletion"
 
@@ -71,38 +76,68 @@ def select_date_in_calendar(driver, wait, date_to_select):
 
 
 def automate_calendly_cleanup():
-        
-    # Configuration
-    EMAIL_temp = os.getenv('EMAIL_TEST')
-    PASSWORD_temp = os.getenv('PASS_TEST')
-    EMAIL = str(EMAIL_temp)
-    PASSWORD = str(PASSWORD_temp)
-    
     chrome_options = Options()
-    chrome_options.add_argument("--headless=new")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--window-size=1920,1080")
-    # Add anti-detection parameters
-    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    chrome_options.add_experimental_option("useAutomationExtension", False)
+    chrome_options.add_argument("--headless=new")  # Run without a GUI
+    chrome_options.add_argument("--no-sandbox")    # Required for GitHub
+    chrome_options.add_argument("--disable-dev-shm-usage")  # Prevents crashes
+    chrome_options.add_argument("--window-size=1920,1080")  # Sets window size
 
     driver = webdriver.Chrome(
         service=ChromeService(ChromeDriverManager().install()),
         options=chrome_options
     )
     
-    wait = WebDriverWait(driver, 5)
+    wait = WebDriverWait(driver, 20)  # Increased timeout
     try:
         driver.get(CALENDLY_LOGIN_URL)
-        email_input = WebDriverWait(driver, 30).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='email-input'] input")))
-        email_input.send_keys(EMAIL)
-        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.button-primary"))).click()
+        
+        # Wait for page to fully load
+        time.sleep(2)
+        
+        # Enter email
+        wait.until(EC.element_to_be_clickable(
+            (By.CSS_SELECTOR, "[data-testid='email-input'] input")
+        )).send_keys(EMAIL)
+        
+        # Click continue button
+        wait.until(EC.element_to_be_clickable(
+            (By.CSS_SELECTOR, "button.button-primary")
+        )).click()
 
-        password_field = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[type='password'][placeholder='password']")))
+        # Wait for password page transition with longer timeout
+        time.sleep(3)
+        
+        # Try multiple selectors for password field
+        password_field = None
+        selectors = [
+            "input[type='password']",
+            "input[placeholder*='password']",
+            "input[name='password']",
+            "[data-testid='password-input'] input",
+            "input[autocomplete='current-password']"
+        ]
+        
+        for selector in selectors:
+            try:
+                password_field = wait.until(EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, selector)
+                ))
+                logging.info(f"Found password field with selector: {selector}")
+                break
+            except:
+                continue
+        
+        if not password_field:
+            raise Exception("Could not locate password field with any selector")
+            
+        # Wait for field to be interactable
+        wait.until(EC.element_to_be_clickable(password_field))
+        password_field.clear()
         password_field.send_keys(PASSWORD)
-        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']"))).click()
+        
+        wait.until(EC.element_to_be_clickable(
+            (By.CSS_SELECTOR, "button[type='submit']")
+        )).click()
 
         wait.until(EC.url_contains("event_types"))
 
