@@ -31,6 +31,6 @@ jobs:
         
     - name: Run calendly cleanup
       env:
-        OM_USER: ${{ secrets.EMAIL_TEST }}
-        OM_PASS: ${{ secrets.PASS_TEST }}
+        EMAIL: ${{ secrets.EMAIL_TEST }}
+        PASSWORD: ${{ secrets.PASS_TEST }}
       run: python calendly_automation.py  # Replace with your script filename
