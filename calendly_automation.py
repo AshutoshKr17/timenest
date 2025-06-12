@@ -1,3 +1,6 @@
+import os
+import time
+import logging
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -8,22 +11,15 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from datetime import datetime, timedelta 
 
-import logging
-
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[logging.StreamHandler()]
 )
 
-
-import os
-import time
-
-
 # Configuration
-EMAIL = os.getenv('EMAIL')
-PASSWORD = os.getenv('PASSWORD')
+EMAIL = os.getenv('EMAIL_TEST')
+PASSWORD = os.getenv('PASS_TEST')
 
 # Configuration
 CALENDLY_LOGIN_URL = "https://calendly.com/login"
