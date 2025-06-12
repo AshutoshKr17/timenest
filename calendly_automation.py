@@ -22,8 +22,8 @@ import time
 
 
 # Configuration
-EMAIL = "akushwaha@digitalocean.com"
-PASSWORD = "Ashutosh@170902"
+EMAIL = os.getenv('EMAIL')
+PASSWORD = os.getenv('PASSWORD')
 
 
 # Configuration
