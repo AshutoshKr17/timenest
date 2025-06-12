@@ -90,11 +90,12 @@ def automate_calendly_cleanup():
     wait = WebDriverWait(driver, 5)
     try:
         driver.get(CALENDLY_LOGIN_URL)
-        email_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='email-input'] input")))
+        
+        email_input = WebDriverWait(driver, 30).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='email-input'] input")))
         email_input.send_keys(EMAIL)
         wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.button-primary"))).click()
 
-        password_field = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[type='password'][placeholder='password']")))
+        password_field = WebDriverWait(driver, 30).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[type='password'][placeholder='password']")))
         password_field.send_keys(PASSWORD)
         wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']"))).click()
 
