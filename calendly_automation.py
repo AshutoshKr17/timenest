@@ -95,7 +95,7 @@ def automate_calendly_cleanup():
         email_input.send_keys(EMAIL)
         wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.button-primary"))).click()
 
-        password_field = WebDriverWait(driver, 30).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[type='password'][placeholder='password']")))
+        password_field = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[type='password'][placeholder='password']")))
         password_field.send_keys(PASSWORD)
         wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']"))).click()
 
