@@ -91,13 +91,29 @@ def automate_calendly_cleanup():
     try:
         driver.get(CALENDLY_LOGIN_URL)
         
-        email_input = WebDriverWait(driver, 30).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-testid='email-input'] input")))
-        email_input.send_keys(EMAIL)
-        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.button-primary"))).click()
+        # Modified login sequence with chained actions
+        wait.until(EC.element_to_be_clickable(
+            (By.CSS_SELECTOR, "[data-testid='email-input'] input")
+        )).send_keys(EMAIL)
+        
+        wait.until(EC.element_to_be_clickable(
+            (By.CSS_SELECTOR, "button.button-primary")
+        )).click()
 
-        password_field = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[type='password'][placeholder='password']")))
+        # Wait for login page to load completely
+        wait.until(EC.url_contains("/login?password=true"))
+        
+        # Use more specific password field selector with multiple attributes
+        password_field = wait.until(EC.element_to_be_clickable(
+            (By.CSS_SELECTOR, "input[type='password'][name='password'][placeholder='password']")
+        ))
+        # Clear field before sending keys
+        password_field.clear()
         password_field.send_keys(PASSWORD)
-        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']"))).click()
+        
+        wait.until(EC.element_to_be_clickable(
+            (By.CSS_SELECTOR, "button[type='submit']")
+        )).click()
 
         wait.until(EC.url_contains("event_types"))
 
