@@ -1,0 +1,29 @@
+name: Slack Notification
+
+on:
+  workflow_run: 
+    workflows: ["**"] 
+    types:
+      - completed
+
+jobs:
+  notify-slack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack notification
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "🎉 Workflow *${{ github.workflow }}* (#${{ github.run_number }}) completed!\n*Repo:* ${{ github.repository }}\n*Status:* ${{ github.event.workflow_run.conclusion }}\n*Commit:* <${{ github.event.workflow_run.head_commit.url }}|${{ format('{0}', github.event.workflow_run.head_commit.message | truncate(30)) }}>\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}|View Workflow>"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATION_WEBHOOK_URL }}
