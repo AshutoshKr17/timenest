@@ -22,8 +22,8 @@ import time
 
 
 # Configuration
-EMAIL = os.getenv('EMAIL')
-PASSWORD = os.getenv('PASSWORD')
+EMAIL = str(os.getenv('EMAIL_TEST', ''))
+PASSWORD = str(os.getenv('PASS_TEST', ''))
 
 
 # Configuration
