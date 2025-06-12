@@ -1,9 +1,8 @@
 name: Slack Notification
 
 on:
-  workflow_dispatch:
-  workflow_run: 
-    workflows: ["**"] 
+  workflow_run:
+    workflows: ["**"]
     types:
       - completed
 
@@ -21,7 +20,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "🎉 Workflow *${{ github.workflow }}* (#${{ github.run_number }}) completed!\n*Repo:* ${{ github.repository }}\n*Status:* ${{ github.event.workflow_run.conclusion }}\n*Commit:* <${{ github.event.workflow_run.head_commit.url }}|${{ github.event.workflow_run.head_commit.message || 'No message' }}>\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}|View Workflow>"
+                    "text": "🎉 Workflow *${{ github.workflow }}* (#${{ github.run_number }}) completed!\n*Repo:* ${{ github.repository }}\n*Status:* ${{ github.event.workflow_run.conclusion || 'unknown' }}\n*Commit:* <${{ github.event.workflow_run.head_commit.url || '#' }}|${{ format('`{0}`', github.event.workflow_run.head_commit.message || 'No message') }}>\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id || '' }}|View Workflow>"
                   }
                 }
               ]
