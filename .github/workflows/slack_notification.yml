@@ -1,7 +1,6 @@
 name: Slack Notification
 
 on:
-  workflow_dispatch:
   workflow_run:
     workflows: ["**"]
     types:
@@ -16,6 +15,7 @@ jobs:
         with:
           payload: |
             {
+              "text": "Workflow ${{ github.workflow }} completed",  # Fallback text
               "blocks": [
                 {
                   "type": "section",
