@@ -22,9 +22,8 @@ import time
 
 
 # Configuration
-EMAIL = str(os.getenv('EMAIL', ''))
-PASSWORD = str(os.getenv('PASSWORD', ''))
-print(EMAIL,PASSWORD)
+EMAIL = os.getenv('EMAIL')
+PASSWORD = os.getenv('PASSWORD')
 
 # Configuration
 CALENDLY_LOGIN_URL = "https://calendly.com/login"
