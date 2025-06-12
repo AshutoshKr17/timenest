@@ -18,8 +18,8 @@ logging.basicConfig(
 )
 
 # Configuration
-EMAIL = os.getenv('EMAIL_TEST')
-PASSWORD = os.getenv('PASS_TEST')
+EMAIL = os.getenv('EMAIL')
+PASSWORD = os.getenv('PASSWORD')
 
 # Configuration
 CALENDLY_LOGIN_URL = "https://calendly.com/login"
