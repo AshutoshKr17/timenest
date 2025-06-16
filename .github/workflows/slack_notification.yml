@@ -1,96 +1,36 @@
-name: Slack Notification
+name: OptinMonster Lead Cleanup
 
 on:
-  workflow_dispatch:
-  workflow_run:
-    workflows: ["**"]
-    types:
-      - completed
-    
+  schedule:
+    # Runs at 2 AM UTC on the 1st of every month
+    - cron: '0 2 1 * *'
+  workflow_dispatch:  # Allows manual runs
 
 jobs:
-  notify-slack:
-    runs-on: ubuntu-latest
+  cleanup-leads:
+    runs-on: ubuntu-latest  # Uses a free Linux machine
+    
     steps:
-      - name: Send Slack notification
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          payload: |
-            {
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "🚀 Workflow Run Update"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Workflow:* ${{ github.workflow }}\n*Run Number:* #${{ github.run_number }}\n*Repository:* ${{ github.repository }}"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Status:* ${{ github.event.workflow_run.conclusion == 'success' && '✅ Success' || github.event.workflow_run.conclusion == 'failure' && '❌ Failed' || '⚠️ ' + github.event.workflow_run.conclusion }}"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Commit:* <${{ github.event.workflow_run.head_commit.url || '#' }}|${{ format('`{0}`', github.event.workflow_run.head_commit.message || 'No message') }}>"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Branch:* `${{ github.event.workflow_run.head_branch }}`"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Triggered by:* ${{ github.event.workflow_run.actor.login }}"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Duration:* ${{ format('{0} minutes', github.event.workflow_run.duration_ms / 60000) }}"
-                  }
-                },
-                {
-                  "type": "actions",
-                  "elements": [
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "View Workflow",
-                        "emoji": true
-                      },
-                      "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}"
-                    },
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "View Logs",
-                        "emoji": true
-                      },
-                      "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}/logs"
-                    }
-                  ]
-                }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATION_WEBHOOK_URL }}
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install selenium webdriver-manager
+        
+    - name: Install Chrome
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y chromium-browser chromium-chromedriver
+        
+    - name: Run OptinMonster cleanup
+      env:
+        OM_USER: ${{ secrets.OM_USER }}
+        OM_PASS: ${{ secrets.OM_PASS }}
+      run: python optinmonster-automation.py  # Replace with your script filename
