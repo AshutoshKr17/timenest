@@ -16,7 +16,7 @@ jobs:
         with:
           payload: |
             {
-              "text": "Workflow *${{ github.event.workflow_run.name }}* completed with status: *${{ github.event.workflow_run.conclusion }}*\nRepository: ${{ github.repository }}\nBranch: ${{ github.event.workflow_run.head_branch }}\nView: https://github.com/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}"
+              "text": "🚀 *${{ github.event.workflow_run.name }}* workflow completed!\n\n📊 **STATUS**: ${{ github.event.workflow_run.conclusion == 'success' && '✅ PASSED' || '❌ FAILED' }}\n\n📁 Repository: ${{ github.repository }}\n🌿 Branch: ${{ github.event.workflow_run.head_branch }}\n👤 Triggered by: ${{ github.event.workflow_run.actor.login }}\n\n🔗 View Details: https://github.com/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATION_WEBHOOK_URL }}
